@@ -5,6 +5,8 @@ require 'byebug'
 
 require_relative 'helpers/app_helper'
 
+Dir["#{Dir.pwd}/models/*.rb"].each { |file| require file }
+
 Instagram.configure do |config|
   config.client_id = '887f005c1aa24e9da51eb9f8ce1156dd'
   config.access_token = 'efc5cdcc91f043f4adb7453c3b1343db'
@@ -14,8 +16,6 @@ class InstagraMonitoring < Sinatra::Application
   helpers do
     include AppHelper
   end
-
-  userTable = {}
 
   enable :sessions
 
@@ -29,31 +29,38 @@ class InstagraMonitoring < Sinatra::Application
   end
 
   post '/signup' do
-    password_salt = BCrypt::Engine.generate_salt
-    password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
+    if params[:password] == params[:checkpassword]
+      password_salt = BCrypt::Engine.generate_salt
+      password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
 
-    { username: '#{name}',
-      password: 'password_hash'
-   }
-    params = params.map{|key, value| "#{key}=#{value}"}.join("&")
-    redirect to('/users?#{params}')
+      User.create(
+        username: params[:username],
+        password_hash: password_hash,
+        password_salt: password_salt
+      )
+      redirect '/'
+    else
+      haml :error
+    end
   end
 
   post '/login' do
-    if userTable.has_key?(params[:username])
-      user = userTable[params[:username]]
-      if user[:passwordhash] == BCrypt::Engine.hash_secret(params[:password], user[:salt])
-        session[:username] = params[:username]
-        redirect '/users'
-      end
+    user = User.where(username: params[:username]).first
+
+    if user && user.password_hash == BCrypt::Engine.hash_secret(params[:password], user.password_salt)
+      session[:username] = params[:username]
+      redirect '/users'
+    else
+      haml :error
     end
-    haml :error
   end
 
   get '/logout' do
     session[:username] = nil
     redirect '/'
   end
+
+  #--- not working
 
   get '/user_search' do
     html = '<h1>Search for users on instagram, by name or usernames</h1>'
