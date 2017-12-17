@@ -3,7 +3,6 @@ require 'bcrypt'
 require 'haml'
 require 'sinatra'
 require 'byebug'
-require '/inst.rb'
 
 enable :sessions
 
@@ -31,7 +30,6 @@ post '/signup' do
   password_salt = BCrypt::Engine.generate_salt
   password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
 
-  #ideally this would be saved into a database, hash used just for sample
   userTable[params[:username]] = {
     salt: password_salt,
     passwordhash: password_hash
