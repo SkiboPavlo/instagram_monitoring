@@ -1,0 +1,8 @@
+- git clone `https://github.com/SkiboPavlo/instagram_monitoring.git`
+- cd instagram_monitoring/config
+- touch database.yml
+- bundle install
+- rake db:create
+- rake db:migrate
+- run app `rerun 'rackup'`
+- visit localhost:9292

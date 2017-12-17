@@ -1,4 +1,5 @@
-require "sinatra"
+require 'sinatra'
+require 'byebug'
 
 current_dir = Dir.pwd
 Dir["#{current_dir}/models/*.rb"].each { |file| require file }
@@ -7,12 +8,12 @@ get '/users' do
   @users = User.all
 end
 
-
 get '/users/:id' do
   @user = User.find(params[:id])
 end
 
 post '/users' do
+  byebug
   @user = User.create(params[:user])
 end
 
