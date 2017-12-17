@@ -1,0 +1,15 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 2
+
+development:
+  <<: *default
+  database: instagram_monitoring_dev
+
+production:
+  <<: *default
+  database: instagram_monitoring_prod
+  username: username
+  password: password
