@@ -1,18 +1,20 @@
 require 'sinatra'
 require 'bcrypt'
-require 'instagram'
+require 'twitter'
 require 'byebug'
 
 require_relative 'helpers/app_helper'
 
 Dir["#{Dir.pwd}/models/*.rb"].each { |file| require file }
 
-Instagram.configure do |config|
-  config.client_id = '887f005c1aa24e9da51eb9f8ce1156dd'
-  config.access_token = 'efc5cdcc91f043f4adb7453c3b1343db'
-end
+# @client = Twitter::REST::Client.new do |config|
+#   config.consumer_key        = 'NAqZhumMd7EOgQpr6OEpgkqsw'
+#   config.consumer_secret     = '1IN1qnLvwv27MQcYhBKZGbOQBVlkFwBftqBHxAgOOxbMh90Wcq'
+#   config.access_token        = '841050097257467904-umgFcRKPZuVkpcILaar0okOAK9DcwyA'
+#   config.access_token_secret = 'lLkndshzcfWHfgOvIuJ2khP4kAJCZ2wjWF1oxgEoHkQfq'
+# end
 
-class InstagraMonitoring < Sinatra::Application
+class TwitterMonitoring < Sinatra::Application
   helpers do
     include AppHelper
   end
@@ -20,7 +22,14 @@ class InstagraMonitoring < Sinatra::Application
   enable :sessions
 
   get '/' do
-    # @recent_media = Instagram.user_recent_media(count: 25)
+    @client = Twitter::REST::Client.new do |config|
+  config.consumer_key        = 'NAqZhumMd7EOgQpr6OEpgkqsw'
+  config.consumer_secret     = '1IN1qnLvwv27MQcYhBKZGbOQBVlkFwBftqBHxAgOOxbMh90Wcq'
+  config.access_token        = '841050097257467904-umgFcRKPZuVkpcILaar0okOAK9DcwyA'
+  config.access_token_secret = 'lLkndshzcfWHfgOvIuJ2khP4kAJCZ2wjWF1oxgEoHkQfq'
+end
+tweets = @client.user_timeline('rubyinside', count: 20)
+byebug
     haml :index
   end
 
@@ -71,11 +80,7 @@ class InstagraMonitoring < Sinatra::Application
   end
 
   get '/media_search' do
-    html = '<h1>Get a list of media close to a given latitude and longitude</h1>'
-    for media_item in client.media_search('37.7808851', '-122.3948632')
-      html << "<img src='#{media_item.images.thumbnail.url}'>"
-    end
-    html
+    tweets = @client.user_timeline('rubyinside', count: 20)
   end
 
   get '/media_popular' do
