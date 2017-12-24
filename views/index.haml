@@ -1,16 +1,17 @@
-- if login?
-  %h1= "Welcome #{username}!"
-  %a{:href => "/logout"} Logout
-- else
-  %form(action="/login" method="post")
-    %div
-      %label(for="username")Username:
-      %input#username(type="text" name="username")
-    %div
-      %label(for="password")Password:
-      %input#password(type="password" name="password")
-    %div
-      %input(type="submit" value="Login")
-      %input(type="reset" value="Clear")
-  %p
-    %a{:href => "/signup"} Signup
+%h1= "Welcome #{username}!"
+%a{:href => "/logout"} Logout
+
+-# %h4 Top 20 rubyinside tweets
+-# %ul
+-#   - @data.each do |post|
+-#     %li
+-#       = post.text
+
+%form(action="/user_search" method="get")
+  %div
+    %label(for="twitter_name")Write username:
+    %input#twitter_name(type="text" name="twitter_name")
+  %div
+    %input(type="submit" value="Find")
+
+
